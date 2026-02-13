@@ -6,9 +6,13 @@ Use this as a starting point or replace it with your code.
 by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit https://creativecommons.org/publicdomain/zero/1.0/
 
 */
+using namespace std;
 
+#include <iostream>
+#include <vector>
 #include "raylib.h"
 
+#include "point.cpp"
 #include "resource_dir.h"	// utility header for SearchAndSetResourceDir
 
 int main ()
@@ -22,31 +26,33 @@ int main ()
 	// Utility function from resource_dir.h to find the resources folder and set it as the current working directory so we can load from it
 	SearchAndSetResourceDir("resources");
 
-	// Load a texture from the resources directory
-	Texture wabbit = LoadTexture("wabbit_alpha.png");
-	
-	// game loop
+	float accumulator = 0.0f;
+	float fixedDt = 1.0f / 60.0f;
+	Point* point = new Point(100, 100);
+	vector<Renderable*> objects;
+	objects.push_back(point);
 	while (!WindowShouldClose())		// run the loop until the user presses ESCAPE or presses the Close button on the window
 	{
-		// drawing
+
+		float frameDt = GetFrameTime();
+		accumulator += frameDt;
+
+		while (accumulator >= fixedDt)
+		{
+			accumulator -= fixedDt;
+
+		}
 		BeginDrawing();
-
-		// Setup the back buffer for drawing (clear color and depth buffers)
 		ClearBackground(BLACK);
-
-		// draw some text using the default font
 		DrawText("Hello Raylib", 200,200,20,WHITE);
-
-		// draw our texture to the screen
-		DrawTexture(wabbit, 400, 200, WHITE);
-		
-		// end the frame and get ready for the next one  (display frame, poll input, etc...)
+		for (Renderable* obj : objects)
+		{
+			Vector2 mousePos = GetMousePosition();
+			obj->render();
+		}
 		EndDrawing();
+		DrawText(TextFormat("FPS: %i", GetFPS()), 10, 10, 20, GREEN);
 	}
-
-	// cleanup
-	// unload our texture so it can be cleaned up
-	UnloadTexture(wabbit);
 
 	// destroy the window and cleanup the OpenGL context
 	CloseWindow();

@@ -91,6 +91,8 @@ DO NOT INSTALL ANOTHER MinGW-W64 from another source such as msys2, you don't ne
 * run `make`
 * you are good to go
 
+make && ./bin/Debug/Rendering
+
 # Output files
 The built code will be in the bin dir
 
