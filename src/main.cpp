@@ -49,7 +49,9 @@ int main ()
 		{
 			Vector2 mousePos = GetMousePosition();
 			if (Hoverable* hoverable = dynamic_cast< Hoverable* >( obj )) {
-				hoverable->Collides(mousePos);
+				if (hoverable->Collides(mousePos)) {
+					
+				}
 			}
 			obj->render();
 		}
