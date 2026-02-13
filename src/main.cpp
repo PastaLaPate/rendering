@@ -48,6 +48,9 @@ int main ()
 		for (Renderable* obj : objects)
 		{
 			Vector2 mousePos = GetMousePosition();
+			if (Hoverable* hoverable = dynamic_cast< Hoverable* >( obj )) {
+				hoverable->Collides(mousePos);
+			}
 			obj->render();
 		}
 		EndDrawing();
