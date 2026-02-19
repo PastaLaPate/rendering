@@ -3,9 +3,10 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include "shape.h"
-#include "renderer.h"
-#include "default_renderer.h"
+#include "raylib.h"
+#include "shapes/shape.h"
+#include "rendering/renderer.h"
+#include "rendering/default_renderer.h"
 
 // Rendering engine to manage and render shapes
 class RenderingEngine {
@@ -38,6 +39,10 @@ public:
     // Render all shapes
     void render() {
         renderer->renderShapes(shapes);
+    }
+
+    void render(Vector2* cameraPosition) {
+        renderer->renderShapes(shapes, cameraPosition);
     }
     
     // Get all shapes

@@ -1,12 +1,14 @@
 #pragma once
 
 #include "raylib.h"
+
 #include "interfaces/renderable.h"
+#include "interfaces/collidable.h"
 
 // Abstract base class for all shapes
-class Shape : public Renderable {
+class Shape : public Renderable, public virtual Collidable {
 public:
-    Shape(Vector2 position = {0, 0}) : position(position) {}
+    Shape(Vector2 position);
     
     virtual ~Shape() = default;
     
@@ -16,8 +18,10 @@ public:
     // Get the bounds of the shape
     virtual Rectangle getBounds() const = 0;
     
-    // Check if a point is inside the shape
+    // Check if a point is inside the shape (for Collidable)
     virtual bool contains(Vector2 point) const = 0;
+    // Collidable interface
+    bool Collides(Vector2 p) const override;
     
     // Setters and getters
     virtual void setPosition(Vector2 newPosition) { position = newPosition; }

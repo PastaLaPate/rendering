@@ -2,7 +2,7 @@
 #include "hoverable.h"
 #include "clickable.h"
 
-class Draggable : Hoverable, Clickable {
+class Draggable : public virtual Hoverable, public virtual Clickable {
     public:
         void onHoverStart() override {
             SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);

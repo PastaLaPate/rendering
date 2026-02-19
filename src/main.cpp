@@ -5,23 +5,20 @@ Demonstrates object-based rendering with shapes, rendering engine, and abstract 
 by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit https://creativecommons.org/publicdomain/zero/1.0/
 
 */
-using namespace std;
 
-#include <iostream>
-#include <vector>
-#include <memory>
+#include "interfaces/hoverable.h"
 #include "raylib.h"
 
 #include "resource_dir.h"
-#include "rendering_engine.h"
-#include "rectangle_shape.h"
-#include "triangle_shape.h"
-#include "text_shape.h"
+#include "rendering/rendering_engine.h"
+#include "shapes/rectangle_shape.h"
+#include "shapes/triangle_shape.h"
+#include "shapes/text_shape.h"
 
 int main()
 {
 	// Tell the window to use vsync and work on high DPI displays
-	SetConfigFlags( FLAG_WINDOW_HIGHDPI); //FLAG_VSYNC_HINT |
+	SetConfigFlags( FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_RESIZABLE); //FLAG_VSYNC_HINT
 
 	// Create the window and OpenGL context
 	InitWindow(1280, 800, "Modular Rendering Engine - Shapes Demo");
@@ -73,20 +70,54 @@ int main()
 	auto infoText = new TextShape({10.0f, 700.0f}, "Click on shapes to interact. Total shapes: " , 20, LIGHTGRAY);
 	renderingEngine.addShape(infoText);
 
+	Vector2* cameraPosition = new Vector2{0.0f, 0.0f};
 	Shape* selectedShape = nullptr;
+	Shape* hoveredShape = nullptr;
+	Hoverable* hoveredHoverable = nullptr;
+	Draggable* selectedDraggable = nullptr;
+	Clickable* selectedClickable = nullptr;
+	Vector2* dragOffset = nullptr;
 
 	while (!WindowShouldClose())
 	{
 		// Input handling
 		Vector2 mousePos = GetMousePosition();
+		hoveredShape = renderingEngine.findShapeAt({mousePos.x + cameraPosition->x, mousePos.y + cameraPosition->y});
+
+		if (hoveredShape) {
+			hoveredHoverable = dynamic_cast<Hoverable*>(hoveredShape);
+			if (hoveredHoverable) {
+				hoveredHoverable->onHoverStart();
+			}
+		} else if (hoveredHoverable) {
+			hoveredHoverable->onHoverEnd();
+			hoveredHoverable = nullptr;
+		}
 
 		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
 		{
-			selectedShape = renderingEngine.findShapeAt(mousePos);
+			selectedShape = hoveredShape;
+			selectedDraggable = dynamic_cast<Draggable*>(selectedShape);
+			selectedClickable = dynamic_cast<Clickable*>(selectedShape);
 			if (selectedShape != nullptr)
 			{
-				selectedShape->setColor(ORANGE);
+				selectedShape->setColor(BLUE);
+				if (selectedClickable) { 
+					selectedClickable->onMouseDown();
+					if (selectedDraggable) {
+						// Calculate drag offset
+						Vector2 shapePos = selectedShape->getPosition();
+						dragOffset = new Vector2{mousePos.x - shapePos.x, mousePos.y - shapePos.y};
+						selectedDraggable->onStartDrag();
+					}
+				 };
 			}
+		}
+	
+
+		if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON)) {
+			cameraPosition->x -= GetMouseDelta().x;
+			cameraPosition->y -= GetMouseDelta().y;
 		}
 
 		if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
@@ -98,14 +129,17 @@ int main()
 				else if (selectedShape == rectangle2) selectedShape->setColor(GREEN);
 				else if (selectedShape == triangle1) selectedShape->setColor(RED);
 				else if (selectedShape == triangle2) selectedShape->setColor(YELLOW);
+				if (selectedClickable) selectedClickable->onMouseUp();
 			}
 			selectedShape = nullptr;
+			selectedDraggable = nullptr;
+			selectedClickable = nullptr;
 		}
 
 		// Drag selected shape
-		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && selectedShape != nullptr)
+		if (IsMouseButtonDown(MOUSE_LEFT_BUTTON) && selectedDraggable != nullptr)
 		{
-			selectedShape->setPosition(mousePos);
+			selectedDraggable->onDrag(mousePos.x - (dragOffset ? dragOffset->x : 0), mousePos.y - (dragOffset ? dragOffset->y : 0));
 		}
 
 		// Render
@@ -113,7 +147,7 @@ int main()
 		ClearBackground(BLACK);
 
 		// Render all shapes using the rendering engine
-		renderingEngine.render();
+		renderingEngine.render(cameraPosition);
 
 		// Draw FPS
 		DrawText(TextFormat("FPS: %i", GetFPS()), 10, 10, 20, GREEN);
