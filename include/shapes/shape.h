@@ -2,9 +2,10 @@
 
 #include "raylib.h"
 #include "camera.h"
-
 #include "interfaces/renderable.h"
 #include "interfaces/collidable.h"
+
+class Scene;
 
 // Abstract base class for all shapes
 class Shape : public Renderable, public virtual Collidable
@@ -15,7 +16,7 @@ public:
     virtual ~Shape() = default;
 
     // Core rendering method - must be implemented by subclasses
-    void render(const Camera2 &camera) override = 0;
+    void render(const Scene &scene) override = 0;
 
     // Get the bounds of the shape
     virtual Rectangle getBounds() const = 0;

@@ -1,5 +1,6 @@
 #include "shapes/rectangle_shape.h"
 #include "camera.h"
+#include "scene.h"
 #include "rendering/mat3.h"
 #include "raylib.h"
 #include <iostream>
@@ -8,11 +9,12 @@ RectangleShape::RectangleShape(Vector2 position, float width, float height, Colo
     : Shape(position), width(width), height(height)
 {
     this->color = color;
+    setDraggingEnabled(true);
 }
 
-void RectangleShape::render(const Camera2 &camera)
+void RectangleShape::render(const Scene &scene)
 {
-    Mat3 cameraMatrix = camera.getCameraMatrix();
+    Mat3 cameraMatrix = scene.getCamera().getCameraMatrix();
     Vector2 p2 = {position.x + width, position.y};
     Vector2 p3 = {position.x + width, position.y + height};
     Vector2 p4 = {position.x, position.y + height};

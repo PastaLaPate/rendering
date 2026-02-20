@@ -1,20 +1,18 @@
 #pragma once
 
+#include "scene.h"
 #include "shapes/shape.h"
 #include "interfaces/draggable.h"
-#include "camera.h"
 
 // Concrete Rectangle shape implementation
-class RectangleShape : public Shape, public Draggable
+class SegmentShape : public Shape, public Draggable
 {
 public:
-    RectangleShape(Vector2 position = {0, 0}, float width = 100, float height = 100, Color color = WHITE);
+    SegmentShape(Vector2 position = {0, 0}, ShapeID p1 = 0, ShapeID p2 = 0, Color color = WHITE);
     void render(const Scene &scene) override;
     Rectangle getBounds() const override;
     bool contains(Vector2 point) const override;
     void setDimensions(float w, float h);
-    float getWidth() const;
-    float getHeight() const;
 
     // Clickable interface
     void onMouseDown() override;
@@ -25,6 +23,6 @@ public:
     void onDrag(float x, float y) override;
 
 private:
-    float width;
-    float height;
+    ShapeID p1;
+    ShapeID p2;
 };

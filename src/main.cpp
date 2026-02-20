@@ -9,12 +9,10 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 #include "interfaces/hoverable.h"
 #include "raylib.h"
 
-#include "raymath.h"
 #include "resource_dir.h"
 #include "scene.h"
-#include "shapes/rectangle_shape.h"
-#include "shapes/triangle_shape.h"
-#include "shapes/text_shape.h"
+#include "shapes.h"
+#include "shapes/segment_shape.h"
 
 int main()
 {
@@ -49,14 +47,16 @@ int main()
 
 	scene.addShape(std::move(rectangle1));
 	scene.addShape(std::move(rectangle2));
-	scene.addShape(std::move(triangle1));
-	scene.addShape(std::move(triangle2));
+	ShapeID triangle1ID = scene.addShape(std::move(triangle1));
+	ShapeID triangle2ID = scene.addShape(std::move(triangle2));
 	scene.addShape(std::move(text1));
 	scene.addShape(std::move(text2));
 	scene.addShape(std::move(text3));
 	scene.addShape(std::move(text4));
 	scene.addShape(std::move(titleText));
 	scene.addShape(std::move(infoText));
+	auto segment1 = std::make_unique<SegmentShape>(Vector2{0.0f, 0.0f}, triangle1ID, triangle2ID, MAGENTA);
+	scene.addShape(std::move(segment1));
 
 	Shape *selectedShape = nullptr;
 	Shape *hoveredShape = nullptr;
@@ -92,6 +92,8 @@ int main()
 		{
 			selectedShape = hoveredShape;
 			selectedDraggable = dynamic_cast<Draggable *>(selectedShape);
+			if (selectedDraggable && !selectedDraggable->isDraggable())
+				selectedDraggable = nullptr;
 			selectedClickable = dynamic_cast<Clickable *>(selectedShape);
 			if (selectedShape != nullptr)
 			{

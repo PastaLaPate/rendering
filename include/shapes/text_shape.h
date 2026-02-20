@@ -11,7 +11,7 @@ class TextShape : public Shape, public Draggable
 {
 public:
     TextShape(Vector2 position = {0, 0}, const std::string &text = "Text", int fontSize = 20, Color color = WHITE);
-    void render(const Camera2 &camera) override;
+    void render(const Scene &scene) override;
     Rectangle getBounds() const override;
     bool contains(Vector2 point) const override;
     void setText(const std::string &newText);

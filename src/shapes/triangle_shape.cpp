@@ -1,5 +1,6 @@
 #include "shapes/triangle_shape.h"
 #include "camera.h"
+#include "scene.h"
 #include "rendering/mat3.h"
 #include <algorithm>
 #include <cmath>
@@ -11,9 +12,9 @@ TriangleShape::TriangleShape(Vector2 position, Vector2 point2, Vector2 point3, C
     this->color = color;
 }
 
-void TriangleShape::render(const Camera2 &camera)
+void TriangleShape::render(const Scene &scene)
 {
-    Mat3 cameraMatrix = camera.getCameraMatrix();
+    Mat3 cameraMatrix = scene.getCamera().getCameraMatrix();
     EnsureCCW(position, p2, p3);
     Vector2 transformedPosition = cameraMatrix.multiply(position);
     Vector2 transformedP2 = cameraMatrix.multiply(p2);

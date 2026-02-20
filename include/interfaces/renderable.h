@@ -1,10 +1,10 @@
 #pragma once
-#include "camera.h"
 
+class Scene;
 class Mat3;
 
 class Renderable
 {
 public:
-    virtual void render(const Camera2 &camera) = 0;
+    virtual void render(const Scene &scene) = 0;
 };

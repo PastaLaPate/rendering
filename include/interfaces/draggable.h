@@ -23,4 +23,9 @@ class Draggable : public virtual Hoverable, public virtual Clickable {
         void onEndDrag() {
             SetMouseCursor(MOUSE_CURSOR_DEFAULT);
         };
+
+        bool isDraggable() const { return draggingEnabled; }
+    protected:
+        bool draggingEnabled = true;
+        void setDraggingEnabled(bool enabled) { draggingEnabled = enabled; }
 };

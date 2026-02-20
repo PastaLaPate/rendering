@@ -1,8 +1,6 @@
 #pragma once
 
-#include "raylib.h"
 #include "rendering/renderer.h"
-#include "camera.h"
 
 
 class Scene;
