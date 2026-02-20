@@ -5,13 +5,14 @@
 #include "interfaces/draggable.h"
 
 // Concrete Text shape implementation
-class TextShape : public Shape, public Draggable {
+class TextShape : public Shape, public Draggable
+{
 public:
-    TextShape(Vector2 position = {0, 0}, const std::string& text = "Text", int fontSize = 20, Color color = WHITE);
-    void render() override;
+    TextShape(Vector2 position = {0, 0}, const std::string &text = "Text", int fontSize = 20, Color color = WHITE);
+    void render(const Mat3 &cameraMatrix) override;
     Rectangle getBounds() const override;
     bool contains(Vector2 point) const override;
-    void setText(const std::string& newText);
+    void setText(const std::string &newText);
     void setFontSize(int size);
     std::string getText() const;
     int getFontSize() const;

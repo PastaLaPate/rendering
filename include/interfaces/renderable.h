@@ -1,5 +1,9 @@
 #pragma once
-class Renderable {
-    public:
-        virtual void render() = 0;
+
+class Mat3;
+
+class Renderable
+{
+public:
+    virtual void render(const Mat3 &cameraMatrix) = 0;
 };

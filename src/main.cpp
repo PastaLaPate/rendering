@@ -18,7 +18,7 @@ by Jeffery Myers is marked with CC0 1.0. To view a copy of this license, visit h
 int main()
 {
 	// Tell the window to use vsync and work on high DPI displays
-	SetConfigFlags( FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_RESIZABLE); //FLAG_VSYNC_HINT
+	SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_RESIZABLE); // FLAG_VSYNC_HINT
 
 	// Create the window and OpenGL context
 	InitWindow(1280, 800, "Modular Rendering Engine - Shapes Demo");
@@ -32,21 +32,19 @@ int main()
 	// Create shapes
 	auto rectangle1 = new RectangleShape({100.0f, 100.0f}, 150.0f, 100.0f, BLUE);
 	auto rectangle2 = new RectangleShape({400.0f, 150.0f}, 120.0f, 120.0f, GREEN);
-	
+
 	auto triangle1 = new TriangleShape(
-		{700.0f, 100.0f},
-		{750.0f, 200.0f},
-		{650.0f, 200.0f},
-		RED
-	);
-	
+			{700.0f, 100.0f},
+			{750.0f, 200.0f},
+			{650.0f, 200.0f},
+			RED);
+
 	auto triangle2 = new TriangleShape(
-		{900.0f, 150.0f},
-		{950.0f, 250.0f},
-		{850.0f, 250.0f},
-		YELLOW
-	);
-	
+			{900.0f, 150.0f},
+			{950.0f, 250.0f},
+			{850.0f, 250.0f},
+			YELLOW);
+
 	auto text1 = new TextShape({100.0f, 300.0f}, "Rectangle Shape", 20, WHITE);
 	auto text2 = new TextShape({400.0f, 350.0f}, "Another Rectangle", 20, WHITE);
 	auto text3 = new TextShape({700.0f, 300.0f}, "Triangle Shapes", 20, WHITE);
@@ -67,57 +65,63 @@ int main()
 	renderingEngine.addShape(titleText);
 
 	// Create an info text shape
-	auto infoText = new TextShape({10.0f, 700.0f}, "Click on shapes to interact. Total shapes: " , 20, LIGHTGRAY);
+	auto infoText = new TextShape({10.0f, 700.0f}, "Click on shapes to interact. Total shapes: ", 20, LIGHTGRAY);
 	renderingEngine.addShape(infoText);
 
-	Vector2* cameraPosition = new Vector2{0.0f, 0.0f};
-	Shape* selectedShape = nullptr;
-	Shape* hoveredShape = nullptr;
-	Hoverable* hoveredHoverable = nullptr;
-	Draggable* selectedDraggable = nullptr;
-	Clickable* selectedClickable = nullptr;
-	Vector2* dragOffset = nullptr;
+	Shape *selectedShape = nullptr;
+	Shape *hoveredShape = nullptr;
+	Hoverable *hoveredHoverable = nullptr;
+	Draggable *selectedDraggable = nullptr;
+	Clickable *selectedClickable = nullptr;
+	Vector2 *dragOffset = nullptr;
 
 	while (!WindowShouldClose())
 	{
 		// Input handling
 		Vector2 mousePos = GetMousePosition();
-		hoveredShape = renderingEngine.findShapeAt({mousePos.x + cameraPosition->x, mousePos.y + cameraPosition->y});
+		hoveredShape = renderingEngine.findShapeAt(renderingEngine.toWorldPosition(mousePos));
 
-		if (hoveredShape) {
-			hoveredHoverable = dynamic_cast<Hoverable*>(hoveredShape);
-			if (hoveredHoverable) {
+		if (hoveredShape)
+		{
+			hoveredHoverable = dynamic_cast<Hoverable *>(hoveredShape);
+			if (hoveredHoverable)
+			{
 				hoveredHoverable->onHoverStart();
 			}
-		} else if (hoveredHoverable) {
+		}
+		else if (hoveredHoverable)
+		{
 			hoveredHoverable->onHoverEnd();
 			hoveredHoverable = nullptr;
 		}
 
+		renderingEngine.setCameraScale({renderingEngine.cameraScale.x + (GetMouseWheelMove() * 0.1f), renderingEngine.cameraScale.y + (GetMouseWheelMove() * 0.1f)});
+
 		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
 		{
 			selectedShape = hoveredShape;
-			selectedDraggable = dynamic_cast<Draggable*>(selectedShape);
-			selectedClickable = dynamic_cast<Clickable*>(selectedShape);
+			selectedDraggable = dynamic_cast<Draggable *>(selectedShape);
+			selectedClickable = dynamic_cast<Clickable *>(selectedShape);
 			if (selectedShape != nullptr)
 			{
 				selectedShape->setColor(BLUE);
-				if (selectedClickable) { 
+				if (selectedClickable)
+				{
 					selectedClickable->onMouseDown();
-					if (selectedDraggable) {
+					if (selectedDraggable)
+					{
 						// Calculate drag offset
 						Vector2 shapePos = selectedShape->getPosition();
 						dragOffset = new Vector2{mousePos.x - shapePos.x, mousePos.y - shapePos.y};
 						selectedDraggable->onStartDrag();
 					}
-				 };
+				};
 			}
 		}
-	
 
-		if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON)) {
-			cameraPosition->x -= GetMouseDelta().x;
-			cameraPosition->y -= GetMouseDelta().y;
+		if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON))
+		{
+			renderingEngine.setCameraPosition({renderingEngine.cameraPosition.x - GetMouseDelta().x, renderingEngine.cameraPosition.y - GetMouseDelta().y});
 		}
 
 		if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
@@ -125,11 +129,16 @@ int main()
 			if (selectedShape != nullptr)
 			{
 				// Restore original color based on shape type
-				if (selectedShape == rectangle1) selectedShape->setColor(BLUE);
-				else if (selectedShape == rectangle2) selectedShape->setColor(GREEN);
-				else if (selectedShape == triangle1) selectedShape->setColor(RED);
-				else if (selectedShape == triangle2) selectedShape->setColor(YELLOW);
-				if (selectedClickable) selectedClickable->onMouseUp();
+				if (selectedShape == rectangle1)
+					selectedShape->setColor(BLUE);
+				else if (selectedShape == rectangle2)
+					selectedShape->setColor(GREEN);
+				else if (selectedShape == triangle1)
+					selectedShape->setColor(RED);
+				else if (selectedShape == triangle2)
+					selectedShape->setColor(YELLOW);
+				if (selectedClickable)
+					selectedClickable->onMouseUp();
 			}
 			selectedShape = nullptr;
 			selectedDraggable = nullptr;
@@ -147,7 +156,7 @@ int main()
 		ClearBackground(BLACK);
 
 		// Render all shapes using the rendering engine
-		renderingEngine.render(cameraPosition);
+		renderingEngine.render();
 
 		// Draw FPS
 		DrawText(TextFormat("FPS: %i", GetFPS()), 10, 10, 20, GREEN);

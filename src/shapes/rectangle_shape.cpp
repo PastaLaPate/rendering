@@ -1,25 +1,40 @@
 #include "shapes/rectangle_shape.h"
+#include "rendering/mat3.h"
 #include "raylib.h"
+#include <iostream>
 
 RectangleShape::RectangleShape(Vector2 position, float width, float height, Color color)
-    : Shape(position), width(width), height(height) {
+    : Shape(position), width(width), height(height)
+{
     this->color = color;
 }
 
-void RectangleShape::render() {
-    DrawRectangle(position.x, position.y, width, height, color);
+void RectangleShape::render(const Mat3 &cameraMatrix)
+{
+    Vector2 p2 = {position.x + width, position.y};
+    Vector2 p3 = {position.x + width, position.y + height};
+    Vector2 p4 = {position.x, position.y + height};
+    Vector2 transformedPosition = cameraMatrix.multiply(position);
+    Vector2 transformedP2 = cameraMatrix.multiply(p2);
+    Vector2 transformedP3 = cameraMatrix.multiply(p3);
+    Vector2 transformedP4 = cameraMatrix.multiply(p4);
+    DrawTriangle(transformedPosition, transformedP3, transformedP2, color);
+    DrawTriangle(transformedPosition, transformedP4, transformedP3, color);
 }
 
-Rectangle RectangleShape::getBounds() const {
+Rectangle RectangleShape::getBounds() const
+{
     return {position.x, position.y, width, height};
 }
 
-bool RectangleShape::contains(Vector2 point) const {
+bool RectangleShape::contains(Vector2 point) const
+{
     return point.x >= position.x && point.x <= position.x + width &&
            point.y >= position.y && point.y <= position.y + height;
 }
 
-void RectangleShape::setDimensions(float w, float h) {
+void RectangleShape::setDimensions(float w, float h)
+{
     width = w;
     height = h;
 }
