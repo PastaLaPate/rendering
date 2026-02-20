@@ -1,6 +1,7 @@
 #pragma once
 
 #include "raylib.h"
+#include "camera.h"
 
 #include "interfaces/renderable.h"
 #include "interfaces/collidable.h"
@@ -14,7 +15,7 @@ public:
     virtual ~Shape() = default;
 
     // Core rendering method - must be implemented by subclasses
-    void render(const Mat3 &cameraMatrix) override = 0;
+    void render(const Camera2 &camera) override = 0;
 
     // Get the bounds of the shape
     virtual Rectangle getBounds() const = 0;

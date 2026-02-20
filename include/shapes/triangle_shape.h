@@ -1,15 +1,17 @@
 #pragma once
 
 #include <cmath>
+#include "camera.h"
 #include "shapes/shape.h"
 #include "interfaces/draggable.h"
+#include "camera.h"
 
 // Concrete Triangle shape implementation
 class TriangleShape : public Shape, public Draggable
 {
 public:
     TriangleShape(Vector2 position = {0, 0}, Vector2 point2 = {50, 100}, Vector2 point3 = {100, 0}, Color color = WHITE);
-    void render(const Mat3 &cameraMatrix) override;
+    void render(const Camera2 &camera) override;
     Rectangle getBounds() const override;
     bool contains(Vector2 point) const override;
     void setVertices(Vector2 p1, Vector2 p2, Vector2 p3);

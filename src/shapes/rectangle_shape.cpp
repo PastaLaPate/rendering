@@ -1,4 +1,5 @@
 #include "shapes/rectangle_shape.h"
+#include "camera.h"
 #include "rendering/mat3.h"
 #include "raylib.h"
 #include <iostream>
@@ -9,8 +10,9 @@ RectangleShape::RectangleShape(Vector2 position, float width, float height, Colo
     this->color = color;
 }
 
-void RectangleShape::render(const Mat3 &cameraMatrix)
+void RectangleShape::render(const Camera2 &camera)
 {
+    Mat3 cameraMatrix = camera.getCameraMatrix();
     Vector2 p2 = {position.x + width, position.y};
     Vector2 p3 = {position.x + width, position.y + height};
     Vector2 p4 = {position.x, position.y + height};

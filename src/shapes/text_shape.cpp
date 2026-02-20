@@ -1,4 +1,5 @@
 #include "shapes/text_shape.h"
+#include "camera.h"
 #include "raylib.h"
 #include "rendering/mat3.h"
 
@@ -8,11 +9,12 @@ TextShape::TextShape(Vector2 position, const std::string &text, int fontSize, Co
     this->color = color;
 }
 
-void TextShape::render(const Mat3 &cameraMatrix)
+void TextShape::render(const Camera2 &camera)
 {
+    Mat3 cameraMatrix = camera.getCameraMatrix();
     Vector2 transformedPosition = cameraMatrix.multiply(position);
-    DrawText(text.c_str(), transformedPosition.x, transformedPosition.y, fontSize, color);
-}
+    DrawTextPro(GetFontDefault(), text.c_str(), transformedPosition, {0, 0}, camera.getRotation(), fontSize * camera.getScale().x, 2.0f*camera.getScale().x, color);
+        }
 
 Rectangle TextShape::getBounds() const
 {
